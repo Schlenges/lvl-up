@@ -1,0 +1,25 @@
+<% include partials/header %>
+
+<header id="header">
+    <h1> -- Welcome, Hero! -- </h1>
+</header>
+
+<div class="flex-container">
+    <% for(let i = 0; i < result.length; i++){ %>
+        <div class="skill-progress">
+                <div class="progressbar">
+                    <span class="progress" style="width:<%= result[i].xp %>%
+                        <% if(result[i].xp == 100){ %>
+                            ;border-radius:5px"
+                        <% } else{ %>
+                            "
+                        <% } %>
+                    ></span>
+                </div>
+                <span class="label"><%= result[i].name %></span>
+                <span class="lvl-progress"><%= result[i].curr_lvl %>/<%= result[i].max_lvl %></span>
+            </div>
+    <% }; %>
+</div>
+
+<% include partials/footer %>
