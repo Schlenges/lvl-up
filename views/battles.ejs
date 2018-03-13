@@ -6,25 +6,31 @@
 
 <div class="flex-container">
     <% for(let i = 0; i < result.length; i++){
-        if(i == 0 || result[i].name != result[i-1].name){ %>
+        if(i == 0 || result[i].name != result[i-1].name){ %> <!-- loop through and display skills-->
         <div class="skill">
             <div class="skill-progress">
                 <div class="progressbar">
-                    <span class="progress" style="width:<%= result[i].curr_xp %>%
+                    <span class="progress" style="width:<%= result[i].curr_xp %>% 
                         <% if(result[i].curr_xp == 100){ %>
                             ;border-radius:5px"
                         <% } else{ %>
                             "
-                        <% } %>
-                    ></span>
+                        <% } %> <!-- display progress -->
+                    </span>
                 </div>
                 <span class="label"><%= result[i].name %></span>
                 <span class="lvl-progress"><%= result[i].curr_lvl %>/<%= result[i].max_lvl %></span>
             </div>
             <div class="battles">
-                <button type="button">+</button>
-                <span class="battle-name">Test battle</span>
-                <span class="xp">10XP</span>
+                <% for(let j = 0; j < result.length; j++){
+                    if(result[j].name == result[i].name){ %>
+                        <div class="battle">
+                            <button type="button">+</button>
+                            <span class="battle-name"><%= result[j].description %></span>
+                            <span class="xp"><%= result[j].xp %></span>
+                        </div>
+                    <% };
+                }; %>
             </div>
         </div>
     <% };

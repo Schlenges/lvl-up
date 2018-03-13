@@ -75,6 +75,11 @@ header{
 
 .battles{
   display: flex;
+  flex-direction: column;
+}
+
+.battle{
+  display: flex;
   align-items: center;
   margin-left: 70px;
   margin-bottom: 15px;
