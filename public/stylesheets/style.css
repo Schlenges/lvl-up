@@ -7,7 +7,6 @@ body{
   margin: 0;
   padding: 0;
   font-family: PixelMiners;
-  t
 }
 
 nav{
@@ -39,6 +38,11 @@ header{
    margin: 5rem;
 }
 
+.skill{
+  display: flex;
+  flex-direction: column;
+}
+
 .skill-progress{
   display: flex;
   justify-content: space-around;
@@ -66,5 +70,26 @@ header{
 }
 
 .lvl-progress{
+  width: 10%;
+}
+
+.battles{
+  display: flex;
+  align-items: center;
+  margin-left: 70px;
+  margin-bottom: 15px;
+}
+
+.battles button{
+  margin-right: 10px;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.battle-name{
+  width: 30%;
+}
+
+.xp{
   width: 10%;
 }

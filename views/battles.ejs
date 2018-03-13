@@ -5,11 +5,13 @@
 </header>
 
 <div class="flex-container">
-    <% for(let i = 0; i < result.length; i++){ %>
-        <div class="skill-progress">
+    <% for(let i = 0; i < result.length; i++){
+        if(i == 0 || result[i].name != result[i-1].name){ %>
+        <div class="skill">
+            <div class="skill-progress">
                 <div class="progressbar">
-                    <span class="progress" style="width:<%= result[i].xp %>%
-                        <% if(result[i].xp == 100){ %>
+                    <span class="progress" style="width:<%= result[i].curr_xp %>%
+                        <% if(result[i].curr_xp == 100){ %>
                             ;border-radius:5px"
                         <% } else{ %>
                             "
@@ -19,7 +21,14 @@
                 <span class="label"><%= result[i].name %></span>
                 <span class="lvl-progress"><%= result[i].curr_lvl %>/<%= result[i].max_lvl %></span>
             </div>
-    <% }; %>
+            <div class="battles">
+                <button type="button">+</button>
+                <span class="battle-name">Test battle</span>
+                <span class="xp">10XP</span>
+            </div>
+        </div>
+    <% };
+    }; %>
 </div>
 
 <% include partials/footer %>

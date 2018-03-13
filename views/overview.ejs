@@ -8,8 +8,8 @@
     <% for(let i = 0; i < result.length; i++){ %>
         <div class="skill-progress">
                 <div class="progressbar">
-                    <span class="progress" style="width:<%= result[i].xp %>%
-                        <% if(result[i].xp == 100){ %>
+                    <span class="progress" style="width:<%= result[i].curr_xp %>%
+                        <% if(result[i].curr_xp == 100){ %>
                             ;border-radius:5px"
                         <% } else{ %>
                             "
