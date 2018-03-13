@@ -40,7 +40,7 @@ app.get('/overview', (req, res) => {
 
 // Battle Updates
 app.get('/battles', (req, res) => {
-  let sql = "SELECT skills.name, skills.curr_xp, skills.curr_lvl, skills.max_lvl, battles.description, battles.xp FROM skills JOIN battles ON skills.ID = battles.skill_ID WHERE skills.user_ID = 1"
+  let sql = "SELECT skills.name, skills.curr_xp, skills.curr_lvl, skills.max_lvl, battles.description, battles.xp, battles.skill_ID FROM skills JOIN battles ON skills.ID = battles.skill_ID WHERE skills.user_ID = 1"
   db.query(sql, (err, result) => {
     if(err) throw err;
     console.log(result);
