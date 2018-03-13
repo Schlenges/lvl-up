@@ -25,9 +25,13 @@
                 <% for(let j = 0; j < result.length; j++){
                     if(result[j].name == result[i].name){ %>
                         <div class="battle">
-                            <button type="button">+</button>
-                            <span class="battle-name"><%= result[j].description %></span>
-                            <span class="xp"><%= result[j].xp %></span>
+                            <form action="/battles" method="POST">
+                                <input name="skill" type="hidden" value="<%= result[j].skill_ID %>">
+                                <input name="xp" type="hidden" value="<%= result[j].xp %>">
+                                <button type="submit">+</button>
+                                <span class="battle-name"><%= result[j].description %></span>
+                                <span class="xp"><%= result[j].xp %></span>
+                            </form>
                         </div>
                     <% };
                 }; %>

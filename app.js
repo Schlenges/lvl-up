@@ -1,8 +1,10 @@
 const express = require('express');
 const mysql = require('mysql');
+const bodyParser = require('body-parser');
 
 const app = express();
 
+app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
 
@@ -38,13 +40,22 @@ app.get('/overview', (req, res) => {
   })
 });
 
-// Battle Updates
+// Battle Updates Overview
 app.get('/battles', (req, res) => {
   let sql = "SELECT skills.name, skills.curr_xp, skills.curr_lvl, skills.max_lvl, battles.description, battles.xp, battles.skill_ID FROM skills JOIN battles ON skills.ID = battles.skill_ID WHERE skills.user_ID = 1"
   db.query(sql, (err, result) => {
     if(err) throw err;
     console.log(result);
     res.render('battles', {result: result});
+  });
+});
+
+// Updating Skills
+app.post('/battles', (req, res) => {
+  let sql = `UPDATE skills SET curr_xp = curr_xp + '${req.body.xp}' WHERE skills.ID = ${req.body.skill}`;
+  db.query(sql, (err, result) => {
+    if(err) throw err;
+    res.redirect('/battles');
   });
 });
 
