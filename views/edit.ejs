@@ -26,9 +26,9 @@
                 </form>
                 <a href="" class="delete btn">Delete</a>
             </div>
-            <% if(result[i].skill_ID != null){%>
             <div class="battles">
-                <% for(let j = 0; j < result.length; j++){
+                <% if(result[i].skill_ID != null){
+                    for(let j = 0; j < result.length; j++){
                     if(result[j].name == result[i].name){ %>
                         <div class="battle">
                             <form action="/battles" method="POST">
@@ -41,9 +41,9 @@
                             <span class="xp"><%= result[j].xp %>XP</span>
                         </div>
                     <% };
-                }; %>
+                }}; %>
+                <a href="" class="add btn small">Add</a>
             </div>
-            <%};%>
         </div>
     <% };
     }; %>

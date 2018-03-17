@@ -138,6 +138,13 @@ header{
   margin: 0;
 }
 
+.add{
+  align-self: flex-start;
+  margin: 0;
+  margin-left: 70px;
+  margin-bottom: 20px;
+}
+
 .small{
   padding: 5px;
   font-size: 0.8rem;
