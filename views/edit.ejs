@@ -10,7 +10,7 @@
         <div class="skill">
             <div class="skill-progress">
                 <div class="progressbar">
-                    <span class="progress yellow" style="width:<%= result[i].curr_xp %>% 
+                    <span class="progress green" style="width:<%= result[i].curr_xp %>% 
                         <% if(result[i].curr_xp == 100){ %>
                             ;border-radius:5px"
                         <% } else{ %>
@@ -18,9 +18,15 @@
                         <% } %> <!-- display progress -->
                     </span>
                 </div>
-                <span class="label"><%= result[i].name %></span>
+                <span class="edit-label"><%= result[i].name %></span>
                 <span class="lvl-progress">LVL <%= result[i].curr_lvl %>/<%= result[i].max_lvl %></span>
+                <form action="/profile/editSkills" method="POST">
+                    <input type="hidden" value="<%= result[i].skill_ID %>" name="id">
+                    <input type="submit" class="edit btn" value="Edit">
+                </form>
+                <a href="" class="delete btn">Delete</a>
             </div>
+            <% if(result[i].skill_ID != null){%>
             <div class="battles">
                 <% for(let j = 0; j < result.length; j++){
                     if(result[j].name == result[i].name){ %>
@@ -28,7 +34,8 @@
                             <form action="/battles" method="POST">
                                 <input name="skill" type="hidden" value="<%= result[j].skill_ID %>">
                                 <input name="xp" type="hidden" value="<%= result[j].xp %>">
-                                <button type="submit">+</button>
+                                <a href="" class="edit btn small">Edit</a>
+                                <a href="" class="delete btn small">Del</a>
                             </form>
                             <span class="battle-name"><%= result[j].description %></span>
                             <span class="xp"><%= result[j].xp %>XP</span>
@@ -36,6 +43,7 @@
                     <% };
                 }; %>
             </div>
+            <%};%>
         </div>
     <% };
     }; %>

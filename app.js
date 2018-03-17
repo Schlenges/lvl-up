@@ -30,22 +30,66 @@ app.get('/', (req, res) => {
 });
 
 // Overview
-
 app.get('/overview', (req, res) => {
   // Select user per mail and get ID (let user = "SELECT ID FROM users WHERE email = " + email)
   let sql = "SELECT * FROM skills WHERE user_ID = 1";
   db.query(sql, (err, result) => {
     if(err) throw err;
-    res.render('overview', {result: result});
+    res.render('overview', {result: result, page: 'overview'});
   })
 });
 
-// Battle Updates Overview
+// Battles Overview
 app.get('/battles', (req, res) => {
   let sql = "SELECT skills.name, skills.curr_xp, skills.curr_lvl, skills.max_lvl, battles.description, battles.xp, battles.skill_ID FROM skills JOIN battles ON skills.ID = battles.skill_ID WHERE skills.user_ID = 1"
   db.query(sql, (err, result) => {
     if(err) throw err;
-    res.render('battles', {result: result});
+    res.render('battles', {result: result, page: 'battles'});
+  });
+});
+
+// Edit Profile
+app.get('/profile', (req, res) => {
+  res.render('profile', {page: 'profile'});
+});
+
+// Add Skill Form
+app.get('/profile/editSkills', (req, res) => {
+  res.render('editSkills', {result: false, page: 'profile'});
+});
+
+// Edit/ Create Skills
+app.post('/profile/edit', (req, res) => {
+  if(req.body.skillID){
+    let sql = `UPDATE skills SET name = '${req.body.skill}', curr_lvl = ${req.body.currLvl}, max_lvl = ${req.body.maxLvl} WHERE ID = ${req.body.skillID}`
+    db.query(sql, (err, result) => {
+      if(err) throw err;
+    });
+  } else{
+    let sql = `INSERT INTO skills (name, curr_lvl, max_lvl, user_ID) VALUES ('${req.body.skill}', ${req.body.currLvl}, ${req.body.maxLvl}, 1)`;
+    db.query(sql, (err, result) => {
+      if(err) throw err;
+    });
+  }
+  res.redirect('/profile/edit');
+});
+
+// Edit Skill Form
+app.post('/profile/editSkills', (req, res) => {
+  let sql = `SELECT ID, name, curr_lvl, max_lvl FROM skills WHERE ID = ${req.body.id}`;
+  db.query(sql, (err, result) => {
+    if(err) throw (err);
+    res.render('editSkills', {result: result, page: 'profile'});
+  });
+});
+
+// Edit Skills Route
+app.get('/profile/edit', (req, res) => {
+  let sql = "SELECT skills.name, skills.curr_xp, skills.curr_lvl, skills.max_lvl, battles.description, battles.xp, battles.skill_ID FROM skills LEFT JOIN battles ON skills.ID = battles.skill_ID WHERE skills.user_ID = 1"
+  db.query(sql, (err, result) => {
+    if(err) throw err;
+    res.render('edit', {result: result, page: 'profile'});
+    console.log(result);
   });
 });
 
