@@ -3,16 +3,17 @@
 <div class="container">
     <form action="/profile/edit" method="POST">
       Skill Name:
-      <input type="text" name="skill" <% if(result != false){%> value="<%= result[0].name %>" <%};%>>
+      <input type="text" name="skill" required <% if(result != false){%> value="<%= result[0].name %>" <%};%>>
       <br>
       Current Level:
-      <input type="number" name="currLvl" min="0" max="100" <% if(result != false){%> value="<%= result[0].curr_lvl %>" <%};%>>
+      <input type="number" name="currLvl" required min="0" max="100" <% if(result != false){%> value="<%= result[0].curr_lvl %>" <%};%>>
       <br>
       Max Level:
-      <input type="number" name="maxLvl" min="1" max="100" <% if(result != false){%> value="<%= result[0].max_lvl %>" <%};%>>
+      <input type="number" name="maxLvl" required min="1" max="100" <% if(result != false){%> value="<%= result[0].max_lvl %>" <%};%>>
       <br>
       <input type="hidden" name="skillID" <% if(result != false){%> value="<%= result[0].ID %>" <%};%>>
-      <button type="submit">Submit</button>
+      <button type="submit" class="btn small">Submit</button>
+      <a href="/profile/edit" class="btn small">Cancel</a>
     </form>
 </div>
 

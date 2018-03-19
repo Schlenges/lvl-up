@@ -65,7 +65,7 @@ app.post('/profile/edit', (req, res) => {
     db.query(sql, (err, result) => {
       if(err) throw err;
     });
-  } else{
+  } else if(req.body.skill != ''){
     let sql = `INSERT INTO skills (name, curr_lvl, max_lvl, user_ID) VALUES ('${req.body.skill}', ${req.body.currLvl}, ${req.body.maxLvl}, 1)`;
     db.query(sql, (err, result) => {
       if(err) throw err;
@@ -85,10 +85,14 @@ app.post('/profile/editSkills', (req, res) => {
 
 // Edit Skills Route
 app.get('/profile/edit', (req, res) => {
-  let sql = "SELECT skills.name, skills.curr_xp, skills.curr_lvl, skills.max_lvl, battles.description, battles.xp, battles.skill_ID FROM skills LEFT JOIN battles ON skills.ID = battles.skill_ID WHERE skills.user_ID = 1"
+  let sql = "SELECT skills.name, skills.curr_xp, skills.curr_lvl, skills.max_lvl, battles.description, battles.xp, skills.ID AS skill_ID, battles.ID AS battle_ID FROM skills LEFT JOIN battles ON skills.ID = battles.skill_ID WHERE skills.user_ID = 1"
   db.query(sql, (err, result) => {
     if(err) throw err;
-    res.render('edit', {result: result, page: 'profile'});
+    if(result.length == 0){
+      res.redirect('/profile/editSkills');
+    } else{
+      res.render('edit', {result: result, page: 'profile'});
+    }
     console.log(result);
   });
 });
@@ -116,6 +120,24 @@ app.post('/battles', (req, res) => {
       };
     res.redirect('/battles');
     });
+  });
+});
+
+// Deleting Skills
+app.get('/profile/edit/deleteSkill/:id', (req, res) => {
+  let sql = `DELETE FROM skills WHERE ID = ${req.params.id}`;
+  db.query(sql, (err, result) => {
+    if(err) throw err;
+    res.redirect('/profile/edit');
+  });
+});
+
+// Deleting Battles
+app.get('/profile/edit/deleteBattle/:id', (req, res) => {
+  let sql = `DELETE FROM battles WHERE ID = ${req.params.id}`;
+  db.query(sql, (err, result) => {
+    if(err) throw err;
+    res.redirect('/profile/edit');
   });
 });
 
