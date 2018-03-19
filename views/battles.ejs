@@ -5,6 +5,7 @@
 </header>
 
 <div class="flex-container">
+    <% if(result.length <= 0){%><p id="message">You have no current battles to fight</p><%};%>
     <% for(let i = 0; i < result.length; i++){
         if(i == 0 || result[i].name != result[i-1].name){ %> <!-- loop through and display skills-->
         <div class="skill">
@@ -25,7 +26,7 @@
                 <% for(let j = 0; j < result.length; j++){
                     if(result[j].name == result[i].name){ %>
                         <div class="battle">
-                            <form action="/battles" method="POST">
+                            <form action="/updates?_method=PUT" method="POST">
                                 <input name="skill" type="hidden" value="<%= result[j].skill_ID %>">
                                 <input name="xp" type="hidden" value="<%= result[j].xp %>">
                                 <button type="submit">+</button>

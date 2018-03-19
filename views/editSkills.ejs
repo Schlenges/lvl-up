@@ -1,7 +1,7 @@
 <% include partials/header %>
 
 <div class="container">
-    <form action="/profile/edit" method="POST">
+    <form action="/skills" method="POST">
       Skill Name:
       <input type="text" name="skill" required <% if(result != false){%> value="<%= result[0].name %>" <%};%>>
       <br>
@@ -13,7 +13,7 @@
       <br>
       <input type="hidden" name="skillID" <% if(result != false){%> value="<%= result[0].ID %>" <%};%>>
       <button type="submit" class="btn small">Submit</button>
-      <a href="/profile/edit" class="btn small">Cancel</a>
+      <a href="/edit" class="btn small">Cancel</a>
     </form>
 </div>
 

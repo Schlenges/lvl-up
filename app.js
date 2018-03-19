@@ -1,9 +1,11 @@
 const express = require('express');
 const mysql = require('mysql');
+const methodOverride = require('method-override');
 const bodyParser = require('body-parser');
 
 const app = express();
 
+app.use(methodOverride('_method'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
@@ -26,10 +28,10 @@ db.connect((err) => {
 
 // Index Route
 app.get('/', (req, res) => {
-  res.render('overview');
+  res.redirect('/overview');
 });
 
-// Overview
+// Skill Overview
 app.get('/overview', (req, res) => {
   // Select user per mail and get ID (let user = "SELECT ID FROM users WHERE email = " + email)
   let sql = "SELECT * FROM skills WHERE user_ID = 1";
@@ -39,8 +41,8 @@ app.get('/overview', (req, res) => {
   })
 });
 
-// Battles Overview
-app.get('/battles', (req, res) => {
+// Battle Updates Overview
+app.get('/updates', (req, res) => {
   let sql = "SELECT skills.name, skills.curr_xp, skills.curr_lvl, skills.max_lvl, battles.description, battles.xp, battles.skill_ID FROM skills JOIN battles ON skills.ID = battles.skill_ID WHERE skills.user_ID = 1"
   db.query(sql, (err, result) => {
     if(err) throw err;
@@ -48,86 +50,8 @@ app.get('/battles', (req, res) => {
   });
 });
 
-// Edit Profile
-app.get('/profile', (req, res) => {
-  res.render('profile', {page: 'profile'});
-});
-
-// Add Skill Form
-app.get('/profile/editSkills', (req, res) => {
-  res.render('editSkills', {result: false, page: 'profile'});
-});
-
-// Add Battle Form
-app.post('/profile/addBattle', (req, res) => {
-  res.render('editBattles', {result: false, skillID: req.body.skillID, page: 'profile'});
-});
-
-// Edit Battle Form
-app.post('/profile/editBattles/', (req, res) => {
-  let sql = `SELECT * FROM battles WHERE ID = ${req.body.battleID}`;
-  db.query(sql, (err, result) => {
-    if(err) throw err;
-    res.render('editBattles', {result: result, page: 'profile'});
-  });
-});
-
-// Edit/ Create Battles
-app.post('/profile/edit/battles', (req, res) => {
-  if(req.body.id){
-    let sql = `UPDATE battles SET description = '${req.body.battle}', xp = ${req.body.xp} WHERE ID = ${req.body.id}`
-    db.query(sql, (err, result) => {
-      if(err) throw err;
-    });
-  } else{
-    let sql = `INSERT INTO battles (description, xp, skill_ID) VALUES ('${req.body.battle}', ${req.body.xp}, ${req.body.skillID})`;
-    db.query(sql, (err, result) => {
-      if(err) throw err;
-    });
-  }
-  res.redirect('/profile/edit');
-});
-
-// Edit/ Create Skills
-app.post('/profile/edit', (req, res) => {
-  if(req.body.skillID){
-    let sql = `UPDATE skills SET name = '${req.body.skill}', curr_lvl = ${req.body.currLvl}, max_lvl = ${req.body.maxLvl} WHERE ID = ${req.body.skillID}`
-    db.query(sql, (err, result) => {
-      if(err) throw err;
-    });
-  } else if(req.body.skill != ''){
-    let sql = `INSERT INTO skills (name, curr_lvl, max_lvl, user_ID) VALUES ('${req.body.skill}', ${req.body.currLvl}, ${req.body.maxLvl}, 1)`;
-    db.query(sql, (err, result) => {
-      if(err) throw err;
-    });
-  }
-  res.redirect('/profile/edit');
-});
-
-// Edit Skill Form
-app.post('/profile/editSkills', (req, res) => {
-  let sql = `SELECT ID, name, curr_lvl, max_lvl FROM skills WHERE ID = ${req.body.id}`;
-  db.query(sql, (err, result) => {
-    if(err) throw (err);
-    res.render('editSkills', {result: result, page: 'profile'});
-  });
-});
-
-// Edit Skills Route
-app.get('/profile/edit', (req, res) => {
-  let sql = "SELECT skills.name, skills.curr_xp, skills.curr_lvl, skills.max_lvl, battles.description, battles.xp, skills.ID AS skill_ID, battles.ID AS battle_ID FROM skills LEFT JOIN battles ON skills.ID = battles.skill_ID WHERE skills.user_ID = 1"
-  db.query(sql, (err, result) => {
-    if(err) throw err;
-    if(result.length == 0){
-      res.redirect('/profile/editSkills');
-    } else{
-      res.render('edit', {result: result, page: 'profile'});
-    }
-  });
-});
-
-// Updating Skills
-app.post('/battles', (req, res) => {
+// Updating XP/LVL
+app.put('/updates', (req, res) => {
   let skill_ID = req.body.skill;
   let sql = `UPDATE skills SET curr_xp = curr_xp + ${req.body.xp} WHERE skills.ID = ${skill_ID}`;
   db.query(sql, (err, result) => {
@@ -142,34 +66,113 @@ app.post('/battles', (req, res) => {
         } else {
           var sql3 = `UPDATE skills SET curr_xp = 100, curr_lvl = max_lvl WHERE skills.ID = ${skill_ID}`;
         };
-
         db.query(sql3, (err, result3) => {
           if(err) throw err;
         });
       };
-    res.redirect('/battles');
+    res.redirect('/updates');
     });
   });
 });
 
-// Deleting Skills
-app.get('/profile/edit/deleteSkill/:id', (req, res) => {
+// Profile
+app.get('/profile', (req, res) => {
+  res.render('profile', {page: 'profile'});
+});
+
+// Edit Overview
+app.get('/edit', (req, res) => {
+  let sql = "SELECT skills.name, skills.curr_xp, skills.curr_lvl, skills.max_lvl, battles.description, battles.xp, skills.ID AS skill_ID, battles.ID AS battle_ID FROM skills LEFT JOIN battles ON skills.ID = battles.skill_ID WHERE skills.user_ID = 1"
+  db.query(sql, (err, result) => {
+    if(err) throw err;
+    if(result.length == 0){
+      res.redirect('/skills/new');
+    } else{
+      res.render('edit', {result: result, page: 'profile'});
+    }
+  });
+});
+
+// Add Skill Form
+app.get('/skills/new', (req, res) => {
+  res.render('editSkills', {result: false, page: 'profile'});
+});
+
+// Edit Skill Form
+app.get('/skills/:id', (req, res) => {
+  let sql = `SELECT ID, name, curr_lvl, max_lvl FROM skills WHERE ID = ${req.params.id}`;
+  db.query(sql, (err, result) => {
+    if(err) throw (err);
+    res.render('editSkills', {result: result, page: 'profile'});
+  });
+});
+
+// Edit/ Create Skills
+app.post('/skills', (req, res) => {
+  if(req.body.skillID){
+    let sql = `UPDATE skills SET name = '${req.body.skill}', curr_lvl = ${req.body.currLvl}, max_lvl = ${req.body.maxLvl} WHERE ID = ${req.body.skillID}`
+    db.query(sql, (err, result) => {
+      if(err) throw err;
+    });
+  } else if(req.body.skill != ''){
+    let sql = `INSERT INTO skills (name, curr_lvl, max_lvl, user_ID) VALUES ('${req.body.skill}', ${req.body.currLvl}, ${req.body.maxLvl}, 1)`;
+    db.query(sql, (err, result) => {
+      if(err) throw err;
+    });
+  }
+  res.redirect('/edit');
+});
+
+// Delete Skills
+app.delete('/skills/:id', (req, res) => {
   let sql = `DELETE FROM skills WHERE ID = ${req.params.id}`;
   db.query(sql, (err, result) => {
     if(err) throw err;
-    res.redirect('/profile/edit');
+    res.redirect('/edit');
   });
 });
 
-// Deleting Battles
-app.get('/profile/edit/deleteBattle/:id', (req, res) => {
+// Add Battle Form
+app.put('/battles/new', (req, res) => {
+  res.render('editBattles', {result: false, skillID: req.body.skillID, page: 'profile'});
+});
+
+// Edit Battle Form
+app.get('/battles/:id', (req, res) => {
+  let sql = `SELECT * FROM battles WHERE ID = ${req.params.id}`;
+  db.query(sql, (err, result) => {
+    if(err) throw err;
+    res.render('editBattles', {result: result, page: 'profile'});
+  });
+});
+
+// Edit/ Create Battles
+app.post('/battles', (req, res) => {
+  if(req.body.id){
+    let sql = `UPDATE battles SET description = '${req.body.battle}', xp = ${req.body.xp} WHERE ID = ${req.body.id}`
+    db.query(sql, (err, result) => {
+      if(err) throw err;
+    });
+  } else{
+    let sql = `INSERT INTO battles (description, xp, skill_ID) VALUES ('${req.body.battle}', ${req.body.xp}, ${req.body.skillID})`;
+    db.query(sql, (err, result) => {
+      if(err) throw err;
+    });
+  }
+  res.redirect('/edit');
+});
+
+// Delete Battles
+app.delete('/battles/:id', (req, res) => {
   let sql = `DELETE FROM battles WHERE ID = ${req.params.id}`;
   db.query(sql, (err, result) => {
     if(err) throw err;
-    res.redirect('/profile/edit');
+    res.redirect('/edit');
   });
 });
 
+
+// Start Server
 const port = 3000;
 app.listen(port, function(){
   console.log('Server started on port ' + port);

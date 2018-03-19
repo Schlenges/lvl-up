@@ -154,3 +154,7 @@ header{
 .edit-label{
   width: 10%;
 }
+
+#message{
+  text-align: center;
+}

@@ -5,6 +5,7 @@
 </header>
 
 <div class="flex-container">
+    <% if(result.length <= 0){%><p id="message">You have no current skills to work on</p><%};%>
     <% for(let i = 0; i < result.length; i++){ %>
         <div class="skill-progress">
                 <div class="progressbar">

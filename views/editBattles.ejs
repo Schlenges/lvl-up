@@ -1,7 +1,7 @@
 <% include partials/header %>
 
 <div class="container">
-    <form action="/profile/edit/battles" method="POST">
+    <form action="/battles" method="POST">
       Battle Description:
       <input type="text" name="battle" required <% if(result != false){%> value="<%= result[0].description %>" <%};%>>
       <br>
@@ -11,7 +11,7 @@
       <% if(result != false){ %> <input type="hidden" name="id" value="<%= result[0].ID %>"> <%};%>
       <% if(typeof skillID != 'undefined'){%> <input type="hidden" name="skillID"  value="<%= skillID %>"> <%};%>
       <button type="submit" class="btn small">Submit</button>
-      <a href="/profile/edit" class="btn small">Cancel</a>
+      <a href="/edit" class="btn small">Cancel</a>
     </form>
 </div>
 

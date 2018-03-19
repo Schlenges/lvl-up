@@ -20,28 +20,26 @@
                 </div>
                 <span class="edit-label"><%= result[i].name %></span>
                 <span class="lvl-progress">LVL <%= result[i].curr_lvl %>/<%= result[i].max_lvl %></span>
-                <form action="/profile/editSkills" method="POST">
-                    <input type="hidden" value="<%= result[i].skill_ID %>" name="id">
-                    <input type="submit" class="edit btn" value="Edit">
+                <a href="/skills/<%= result[i].skill_ID%>" class="edit btn">Edit</a>
+                <form action="/skills/<%= result[i].skill_ID%>?_method=DELETE" method="POST">
+                    <input type="submit" class="delete btn" value="DELETE">
                 </form>
-                <a href="/profile/edit/deleteSkill/<%= result[i].skill_ID%>" class="delete btn">Delete</a>
             </div>
             <div class="battles">
                 <% if(result[i].battle_ID != null){
                     for(let j = 0; j < result.length; j++){
                     if(result[j].name == result[i].name){ %>
                         <div class="battle">
-                            <form action="/profile/editBattles" method="POST">
-                                <input type="hidden" value="<%= result[j].battle_ID %>" name="battleID">
-                                <input type="submit" class="edit btn small" value="Edit">
+                            <a href="/battles/<%= result[j].battle_ID %>" class="edit btn small">Edit</a>
+                            <form action="/battles/<%= result[j].battle_ID%>?_method=DELETE" method="POST">
+                                <input type="submit" class="delete btn small" value="Del">
                             </form>
-                            <a href="/profile/edit/deleteBattle/<%= result[j].battle_ID%>" class="delete btn small">Del</a>
                             <span class="battle-name"><%= result[j].description %></span>
                             <span class="xp"><%= result[j].xp %>XP</span>
                         </div>
                     <% };
                 }}; %>
-                <form action="/profile/addBattle" method="POST">
+                <form action="/battles/new?_method=PUT" method="POST">
                     <input type="hidden" value="<%= result[i].skill_ID %>" name="skillID">
                     <input type="submit" class="add btn small" value="Add">
                 </form>
