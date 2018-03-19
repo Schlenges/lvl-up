@@ -58,6 +58,36 @@ app.get('/profile/editSkills', (req, res) => {
   res.render('editSkills', {result: false, page: 'profile'});
 });
 
+// Add Battle Form
+app.post('/profile/addBattle', (req, res) => {
+  res.render('editBattles', {result: false, skillID: req.body.skillID, page: 'profile'});
+});
+
+// Edit Battle Form
+app.post('/profile/editBattles/', (req, res) => {
+  let sql = `SELECT * FROM battles WHERE ID = ${req.body.battleID}`;
+  db.query(sql, (err, result) => {
+    if(err) throw err;
+    res.render('editBattles', {result: result, page: 'profile'});
+  });
+});
+
+// Edit/ Create Battles
+app.post('/profile/edit/battles', (req, res) => {
+  if(req.body.id){
+    let sql = `UPDATE battles SET description = '${req.body.battle}', xp = ${req.body.xp} WHERE ID = ${req.body.id}`
+    db.query(sql, (err, result) => {
+      if(err) throw err;
+    });
+  } else{
+    let sql = `INSERT INTO battles (description, xp, skill_ID) VALUES ('${req.body.battle}', ${req.body.xp}, ${req.body.skillID})`;
+    db.query(sql, (err, result) => {
+      if(err) throw err;
+    });
+  }
+  res.redirect('/profile/edit');
+});
+
 // Edit/ Create Skills
 app.post('/profile/edit', (req, res) => {
   if(req.body.skillID){
@@ -93,7 +123,6 @@ app.get('/profile/edit', (req, res) => {
     } else{
       res.render('edit', {result: result, page: 'profile'});
     }
-    console.log(result);
   });
 });
 

@@ -31,18 +31,20 @@
                     for(let j = 0; j < result.length; j++){
                     if(result[j].name == result[i].name){ %>
                         <div class="battle">
-                            <form action="/battles" method="POST">
-                                <input name="skill" type="hidden" value="<%= result[j].skill_ID %>">
-                                <input name="xp" type="hidden" value="<%= result[j].xp %>">
-                                <a href="" class="edit btn small">Edit</a>
-                                <a href="/profile/edit/deleteBattle/<%= result[j].battle_ID%>" class="delete btn small">Del</a>
+                            <form action="/profile/editBattles" method="POST">
+                                <input type="hidden" value="<%= result[j].battle_ID %>" name="battleID">
+                                <input type="submit" class="edit btn small" value="Edit">
                             </form>
+                            <a href="/profile/edit/deleteBattle/<%= result[j].battle_ID%>" class="delete btn small">Del</a>
                             <span class="battle-name"><%= result[j].description %></span>
                             <span class="xp"><%= result[j].xp %>XP</span>
                         </div>
                     <% };
                 }}; %>
-                <a href="" class="add btn small">Add</a>
+                <form action="/profile/addBattle" method="POST">
+                    <input type="hidden" value="<%= result[i].skill_ID %>" name="skillID">
+                    <input type="submit" class="add btn small" value="Add">
+                </form>
             </div>
         </div>
     <% };

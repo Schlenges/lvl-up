@@ -1,0 +1,18 @@
+<% include partials/header %>
+
+<div class="container">
+    <form action="/profile/edit/battles" method="POST">
+      Battle Description:
+      <input type="text" name="battle" required <% if(result != false){%> value="<%= result[0].description %>" <%};%>>
+      <br>
+      XP:
+      <input type="number" name="xp" required min="1" max="100" <% if(result != false){%> value="<%= result[0].xp %>" <%};%>>
+      <br>
+      <% if(result != false){ %> <input type="hidden" name="id" value="<%= result[0].ID %>"> <%};%>
+      <% if(typeof skillID != 'undefined'){%> <input type="hidden" name="skillID"  value="<%= skillID %>"> <%};%>
+      <button type="submit" class="btn small">Submit</button>
+      <a href="/profile/edit" class="btn small">Cancel</a>
+    </form>
+</div>
+
+<% include partials/footer %>
