@@ -2,6 +2,8 @@ const express = require('express');
 const mysql = require('mysql');
 const methodOverride = require('method-override');
 const bodyParser = require('body-parser');
+const passport = require('passport'); //passport
+const LocalStrategy = require('passport-local').Strategy; // Local Strategy
 
 const app = express();
 
@@ -9,6 +11,10 @@ app.use(methodOverride('_method'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
+// Passport setup
+app.use(require('express-session')({ secret: 'keyboard cat', resave: false, saveUninitialized: false }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Database Connection
 
@@ -26,15 +32,58 @@ db.connect((err) => {
   console.log('MySQL is connected');
 });
 
-// Index Route
-app.get('/', (req, res) => {
-  res.redirect('/overview');
+// Passport Authentication Strategy
+passport.use('local-login', new LocalStrategy({passReqToCallback: true},
+  function(req, username, password, done){
+    let sql = `SELECT * FROM users WHERE name = '${username}'`;
+    db.query(sql, (err, user) => {
+      if (err) return done(err);
+      //if username doesn't exist
+      if (!user){
+        return done(null, false);
+      }
+      //if password is wrong
+      if (!( user[0].password == password)){
+        return done(null, false);
+      }
+      //if successful
+      return done(null, user[0]);			
+    });
+  }
+));
+
+// Serialize user for session
+passport.serializeUser(function(user, done){
+  done(null, user.ID);
 });
+
+// Deserialize user
+passport.deserializeUser(function(id, done){
+  db.query(`SELECT * FROM users WHERE ID = ${id}`, (err, user) => {
+    done(err, user[0]);
+  });
+});
+
+//----------------------------------------------------------------- ROUTES ---------------------------------------------------------------------------------------
+
+// Index
+app.get('/', (req, res) => {
+  res.redirect('/login');
+});
+
+// Login
+app.get('/login', (req, res) => {
+  res.render('login');
+});
+
+app.post('/login', 
+  passport.authenticate('local-login', { successRedirect: '/overview', failureRedirect: '/login' })
+);
 
 // Skill Overview
 app.get('/overview', (req, res) => {
-  // Select user per mail and get ID (let user = "SELECT ID FROM users WHERE email = " + email)
-  let sql = "SELECT * FROM skills WHERE user_ID = 1";
+  let userID = req.session.passport.user;
+  let sql = `SELECT * FROM skills WHERE user_ID = ${userID}`;
   db.query(sql, (err, result) => {
     if(err) throw err;
     res.render('overview', {result: result, page: 'overview'});
@@ -43,7 +92,7 @@ app.get('/overview', (req, res) => {
 
 // Battle Updates Overview
 app.get('/updates', (req, res) => {
-  let sql = "SELECT skills.name, skills.curr_xp, skills.curr_lvl, skills.max_lvl, battles.description, battles.xp, battles.skill_ID FROM skills JOIN battles ON skills.ID = battles.skill_ID WHERE skills.user_ID = 1"
+  let sql = `SELECT skills.name, skills.curr_xp, skills.curr_lvl, skills.max_lvl, battles.description, battles.xp, battles.skill_ID FROM skills JOIN battles ON skills.ID = battles.skill_ID WHERE skills.user_ID = ${req.session.passport.user}`
   db.query(sql, (err, result) => {
     if(err) throw err;
     res.render('battles', {result: result, page: 'battles'});
@@ -82,7 +131,7 @@ app.get('/profile', (req, res) => {
 
 // Edit Overview
 app.get('/edit', (req, res) => {
-  let sql = "SELECT skills.name, skills.curr_xp, skills.curr_lvl, skills.max_lvl, battles.description, battles.xp, skills.ID AS skill_ID, battles.ID AS battle_ID FROM skills LEFT JOIN battles ON skills.ID = battles.skill_ID WHERE skills.user_ID = 1"
+  let sql = `SELECT skills.name, skills.curr_xp, skills.curr_lvl, skills.max_lvl, battles.description, battles.xp, skills.ID AS skill_ID, battles.ID AS battle_ID FROM skills LEFT JOIN battles ON skills.ID = battles.skill_ID WHERE skills.user_ID = ${req.session.passport.user}`;
   db.query(sql, (err, result) => {
     if(err) throw err;
     if(result.length == 0){
@@ -115,7 +164,7 @@ app.post('/skills', (req, res) => {
       if(err) throw err;
     });
   } else if(req.body.skill != ''){
-    let sql = `INSERT INTO skills (name, curr_lvl, max_lvl, user_ID) VALUES ('${req.body.skill}', ${req.body.currLvl}, ${req.body.maxLvl}, 1)`;
+    let sql = `INSERT INTO skills (name, curr_lvl, max_lvl, user_ID) VALUES ('${req.body.skill}', ${req.body.currLvl}, ${req.body.maxLvl}, ${req.session.passport.user})`;
     db.query(sql, (err, result) => {
       if(err) throw err;
     });
@@ -171,6 +220,7 @@ app.delete('/battles/:id', (req, res) => {
   });
 });
 
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // Start Server
 const port = 3000;
