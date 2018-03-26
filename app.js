@@ -4,6 +4,8 @@ const methodOverride = require('method-override');
 const bodyParser = require('body-parser');
 const passport = require('passport'); //passport
 const LocalStrategy = require('passport-local').Strategy; // Local Strategy
+const flash = require('express-flash');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 
@@ -12,9 +14,11 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
 // Passport setup
-app.use(require('express-session')({ secret: 'keyboard cat', resave: false, saveUninitialized: false }));
+app.use(cookieParser('keyboard cat'));
+app.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(flash());
 
 // Database Connection
 
@@ -39,12 +43,12 @@ passport.use('local-login', new LocalStrategy({passReqToCallback: true},
     db.query(sql, (err, user) => {
       if (err) return done(err);
       //if username doesn't exist
-      if (!user){
-        return done(null, false);
+      if (!user.length){
+        return done(null, false, {message: 'No user found'});
       }
       //if password is wrong
-      if (!( user[0].password == password)){
-        return done(null, false);
+      else if (!(user[0].password == password)){
+        return done(null, false, {message: 'Wrong password'});
       }
       //if successful
       return done(null, user[0]);			
@@ -73,11 +77,11 @@ app.get('/', (req, res) => {
 
 // Login
 app.get('/login', (req, res) => {
-  res.render('login');
+  res.render('login', {message: req.flash('error')});
 });
 
 app.post('/login', 
-  passport.authenticate('local-login', { successRedirect: '/overview', failureRedirect: '/login' })
+  passport.authenticate('local-login', {successRedirect: '/overview', failureRedirect: '/login', failureFlash: true})
 );
 
 // Skill Overview
