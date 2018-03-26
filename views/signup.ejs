@@ -1,0 +1,19 @@
+<% include partials/header %>
+
+<div class="container">
+  <p>Flash: <%= message %></p>
+  <form action="/signup" method="POST">
+    Email:
+    <input type="email" name="email">
+    <br>
+    Username:
+    <input type="text" name="username">
+    <br>
+    Password:
+    <input type="password" name="password">
+    <br>
+    <input type="submit">
+  </form>
+</div>
+
+<% include partials/footer %>
