@@ -1,9 +1,11 @@
+// ------------------------------------------------------------------------- SETUP ----------------------------------------------------------------------------------------
+
 const express = require('express');
 const mysql = require('mysql');
 const methodOverride = require('method-override');
 const bodyParser = require('body-parser');
-const passport = require('passport'); //passport
-const LocalStrategy = require('passport-local').Strategy; // Local Strategy
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 const flash = require('express-flash');
 const cookieParser = require('cookie-parser');
 
@@ -20,7 +22,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 
-// Database Connection
+// ---------------------------------------------------------------- DATABASE CONNECTION ------------------------------------------------------------------------------------
 
 const db = mysql.createConnection({
   host     : 'localhost',
@@ -36,7 +38,8 @@ db.connect((err) => {
   console.log('MySQL is connected');
 });
 
-// Passport Authentication Strategies
+// ---------------------------------------------------------- PASSPORT/ AUTHENTICATION STRATEGIES -----------------------------------------------------------------------------
+
 //Local Signup
 passport.use('local-signup', new LocalStrategy({usernameField: 'email', passReqToCallback: true},
   function(req, email, password, done){
@@ -95,7 +98,28 @@ passport.deserializeUser(function(id, done){
   });
 });
 
-//----------------------------------------------------------------- ROUTES ---------------------------------------------------------------------------------------
+// -------------------------------------------------------------- MIDDLEWARE ------------------------------------------------------------------------------------------------
+
+// Check if user is already logged in
+function isLoggedIn(req, res, next) {
+  if(req.isAuthenticated()){
+    if(req.path == '/login'){
+      res.redirect('/overview');
+    } else {
+      return next();
+    }
+  } else {
+    if(req.path == '/login'){
+      return next();
+    } else {
+      res.redirect('/login');
+    }
+  }
+};
+
+//----------------------------------------------------------------- ROUTES ------------------------------------------------------------------------------------------------
+
+app.all('*', isLoggedIn);
 
 // Index
 app.get('/', (req, res) => {
@@ -266,7 +290,7 @@ app.delete('/battles/:id', (req, res) => {
   });
 });
 
-//-------------------------------------------------------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------- SERVER ----------------------------------------------------------------------------------------------
 
 // Start Server
 const port = 3000;
