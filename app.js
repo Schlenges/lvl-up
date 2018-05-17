@@ -103,13 +103,13 @@ passport.deserializeUser(function(id, done){
 // Check if user is already logged in
 function isLoggedIn(req, res, next) {
   if(req.isAuthenticated()){
-    if(req.path == '/login'){
+    if(req.path == '/login' || req.path == '/signup'){
       res.redirect('/overview');
     } else {
       return next();
     }
   } else {
-    if(req.path == '/login'){
+    if(req.path == '/login' || req.path == '/signup'){
       return next();
     } else {
       res.redirect('/login');
