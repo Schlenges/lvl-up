@@ -44,9 +44,15 @@ body{
   margin: auto;
 }
 
-header{
+#header{
    text-align: center;
    margin: 5rem;
+}
+
+#header img{
+  margin-bottom: -70px;
+  margin-left: -40px;
+  margin-right: -65px;
 }
 
 .skill{
