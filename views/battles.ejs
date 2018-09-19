@@ -26,7 +26,7 @@
                 <% for(let j = 0; j < result.length; j++){
                     if(result[j].name == result[i].name){ %>
                         <div class="battle">
-                            <form action="/updates?_method=PUT" method="POST">
+                            <form action="/battles?_method=PUT" method="POST">
                                 <input name="skill" type="hidden" value="<%= result[j].skill_ID %>">
                                 <input name="xp" type="hidden" value="<%= result[j].xp %>">
                                 <button type="submit">+</button>

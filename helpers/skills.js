@@ -27,7 +27,7 @@ exports.createSkill = (req, res) => {
       if(err) throw err;
     });
   }
-  res.redirect('/skills/edit');
+  res.redirect('/profile/edit');
 };
 
 exports.addSkill = (req, res) => {
@@ -48,7 +48,7 @@ exports.deleteSkill = (req, res) => {
   
   db.query(sql, (err, result) => {
     if(err) throw err;
-    res.redirect('/skills/edit');
+    res.redirect('/profile/edit');
   });
 };
 
