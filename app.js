@@ -6,10 +6,8 @@ const express = require('express');
       methodOverride = require('method-override'); // for form input
       bodyParser = require('body-parser');
       passport = require('passport');
-      LocalStrategy = require('passport-local').Strategy;
       flash = require('express-flash');
       cookieParser = require('cookie-parser');
-      db = require('./db');
 
 const app = express();
 

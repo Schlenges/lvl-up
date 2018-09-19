@@ -1,4 +1,4 @@
-const db = require('../db');
+const db = require('../config/db');
 
 exports.showBattles = (req, res) => {
   let sql = `SELECT skills.name, skills.curr_xp, skills.curr_lvl, skills.max_lvl, battles.description, battles.xp, battles.skill_ID

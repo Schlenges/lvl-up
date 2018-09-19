@@ -1,6 +1,6 @@
 const passport = require('passport');
       LocalStrategy = require('passport-local').Strategy;
-      db = require('../db');
+      db = require('../config/db');
 
 //Local Signup
 passport.use('local-signup', new LocalStrategy({usernameField: 'email', passReqToCallback: true},

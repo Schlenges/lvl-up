@@ -1,4 +1,4 @@
-const db = require('../db');
+const db = require('../config/db');
 
 exports.showSkills = (req, res) => {
   let sql = `SELECT * FROM skills WHERE user_ID = ${req.session.passport.user}`;
