@@ -3,7 +3,7 @@ const express = require('express');
 
 
 // Index
-router.route('/').get((req, res) => {
+router.get('/', (req, res) => {
   res.redirect('/login');
 });
 
@@ -24,6 +24,6 @@ router.route('/logout').get((req, res) => {
 })
 
 // Profile
-router.route('/profile').get((req, res) => res.render('profile', {page: 'profile'}));
+router.get('/profile', (req, res) => res.render('profile', {page: 'profile'}));
 
 module.exports = router;

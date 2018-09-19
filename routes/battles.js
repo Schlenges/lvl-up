@@ -3,9 +3,9 @@ const express = require('express');
       helpers = require('../helpers/battles');
 
 
-router.route('/').post(helpers.createBattle); // Edit/ Create Battles
+router.post('/', helpers.createBattle); // Edit/ Create Battles
 
-router.route('/new').put(helpers.addBattle); // Add Battle Form
+router.put('/new', helpers.addBattle); // Add Battle Form
 
 router.route('/:id')
   .get(helpers.editBattle) // Edit Battle Form

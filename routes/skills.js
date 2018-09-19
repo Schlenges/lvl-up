@@ -7,9 +7,9 @@ router.route('/')
   .get(helpers.showSkills) // Skill Overview
   .post(helpers.createSkill); // Edit/ Create Skills
 
-router.route('/new').get(helpers.skillForm); // Add Skill Form
+router.get('/new', helpers.skillForm); // Add Skill Form
 
-router.route('/edit').get(helpers.editOverview); // Edit Overview
+router.get('/edit', helpers.editOverview); // Edit Overview
 
 router.route('/:id')
   .get(helpers.editSkill) // Edit Skill Form

@@ -6,12 +6,4 @@
 </head>
 <body>
 
-    <nav id="navbar">
-        <div class="logo <%if(typeof page == 'undefined'){%>login<%}%>">LVL UP!</div>
-        <% if(typeof page != 'undefined'){%>
-        <a href="/skills" class="nav-item <% if(page == 'overview'){ %>active<%};%>">Home</a>
-        <a href="/updates" class="nav-item <% if(page == 'battles'){ %>active<%};%>">Battle Updates</a>
-        <a href="/profile" class="nav-item <% if(page == 'profile'){ %>active<%};%>">Edit Profile</a>
-        <a href="/logout" class="nav-item right">Logout</a>
-        <%};%>
-    </nav>
+<% include ./navbar %>
