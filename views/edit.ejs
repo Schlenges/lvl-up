@@ -47,7 +47,7 @@
                         </div>
                     <% };
                 }}; %>
-                <form action="/battles/new" method="GET">
+                <form action="/battles/new?_method=PUT" method="POST">
                     <input type="hidden" value="<%= result[i].skill_ID %>" name="skillID">
                     <input type="submit" class="add btn small" value="Add">
                 </form>

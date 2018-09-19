@@ -7,7 +7,7 @@ router.route('/')
   .post(helpers.createBattle)               // Edit/ Create Battles
   .put(helpers.updateXP)                    // Update XP
 
-router.get('/new', helpers.addBattle);      // Add Battle Form
+router.put('/new', helpers.addBattle);      // Add Battle Form
 
 router.route('/:id')
   .get(helpers.editBattle)                  // Edit Battle Form
