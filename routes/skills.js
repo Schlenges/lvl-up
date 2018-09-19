@@ -4,15 +4,14 @@ const express = require('express');
 
 
 router.route('/')
-  .get(helpers.showSkills) // Skill Overview
-  .post(helpers.createSkill); // Edit/ Create Skills
+  .get(helpers.showSkills)                          // Skills Overview
+  .post(helpers.createSkill);                       // Edit/ Create Skill
 
-router.get('/new', helpers.skillForm); // Add Skill Form
-
-router.get('/edit', helpers.editOverview); // Edit Overview
+router.get('/new', helpers.addSkill);               // Add Skill Form
 
 router.route('/:id')
-  .get(helpers.editSkill) // Edit Skill Form
-  .delete(helpers.deleteSkill); // Delete Skills
+  .get(helpers.editSkill)                           // Edit Skill Form
+  .delete(helpers.deleteSkill);                     // Delete Skill
+  
 
 module.exports = router;

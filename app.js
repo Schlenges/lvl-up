@@ -31,7 +31,7 @@ app.use(flash());
 // -----------------------------------------------------------------
 
 const loginRoutes = require('./routes/login');
-      updateRoutes = require('./routes/updates');
+      profileRoutes = require('./routes/profile');
       skillRoutes = require('./routes/skills');
       battleRoutes = require('./routes/battles');
       authentication = require('./routes/middleware/auth');
@@ -39,7 +39,7 @@ const loginRoutes = require('./routes/login');
 app.all('*', authentication);
 
 app.use('/', loginRoutes);
-app.use('/updates', updateRoutes);
+app.use('/profile', profileRoutes);
 app.use('/skills', skillRoutes);
 app.use('/battles', battleRoutes);
 

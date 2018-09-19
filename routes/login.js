@@ -23,7 +23,4 @@ router.route('/logout').get((req, res) => {
   res.redirect('/login');
 })
 
-// Profile
-router.get('/profile', (req, res) => res.render('profile', {page: 'profile'}));
-
 module.exports = router;
