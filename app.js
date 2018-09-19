@@ -1,13 +1,15 @@
-// ------------------------------------------------------------------------- SETUP ----------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
+//                               SETUP 
+// -----------------------------------------------------------------
 
 const express = require('express');
-const mysql = require('mysql');
-const methodOverride = require('method-override');
-const bodyParser = require('body-parser');
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-const flash = require('express-flash');
-const cookieParser = require('cookie-parser');
+      methodOverride = require('method-override'); // for form input
+      bodyParser = require('body-parser');
+      passport = require('passport');
+      LocalStrategy = require('passport-local').Strategy;
+      flash = require('express-flash');
+      cookieParser = require('cookie-parser');
+      db = require('./db');
 
 const app = express();
 
@@ -22,23 +24,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 
-// ---------------------------------------------------------------- DATABASE CONNECTION ------------------------------------------------------------------------------------
-
-const db = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : '',
-  database : 'lvl_up'
-});
-
-db.connect((err) => {
-  if(err){
-    throw err;
-  }
-  console.log('MySQL is connected');
-});
-
-// ---------------------------------------------------------- PASSPORT/ AUTHENTICATION STRATEGIES -----------------------------------------------------------------------------
+// -----------------------------------------------------------------
+//                 PASSPORT/ AUTHENTICATION STRATEGIES
+// -----------------------------------------------------------------
 
 //Local Signup
 passport.use('local-signup', new LocalStrategy({usernameField: 'email', passReqToCallback: true},
@@ -98,7 +86,9 @@ passport.deserializeUser(function(id, done){
   });
 });
 
-// -------------------------------------------------------------- MIDDLEWARE ------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
+//                            MIDDLEWARE
+// -----------------------------------------------------------------
 
 // Check if user is already logged in
 function isLoggedIn(req, res, next) {
@@ -117,7 +107,9 @@ function isLoggedIn(req, res, next) {
   }
 };
 
-//----------------------------------------------------------------- ROUTES ------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------
+//                            ROUTES 
+// -----------------------------------------------------------------
 
 app.all('*', isLoggedIn);
 
@@ -160,40 +152,6 @@ app.get('/overview', (req, res) => {
   })
 });
 
-// Battle Updates Overview
-app.get('/updates', (req, res) => {
-  let sql = `SELECT skills.name, skills.curr_xp, skills.curr_lvl, skills.max_lvl, battles.description, battles.xp, battles.skill_ID FROM skills JOIN battles ON skills.ID = battles.skill_ID WHERE skills.user_ID = ${req.session.passport.user}`
-  db.query(sql, (err, result) => {
-    if(err) throw err;
-    res.render('battles', {result: result, page: 'battles'});
-  });
-});
-
-// Updating XP/LVL
-app.put('/updates', (req, res) => {
-  let skill_ID = req.body.skill;
-  let sql = `UPDATE skills SET curr_xp = curr_xp + ${req.body.xp} WHERE skills.ID = ${skill_ID}`;
-  db.query(sql, (err, result) => {
-    if(err) throw err;
-    let sql2 = `SELECT curr_xp, curr_lvl, max_lvl FROM skills WHERE skills.ID = ${skill_ID}`;
-    db.query(sql2, (err, result2) => {
-      if(err) throw err;
-      if(result2[0].curr_xp > 100){
-        if(result2[0].curr_lvl < result2[0].max_lvl){
-          let xp = result2[0].curr_xp - 100;
-          var sql3 = `UPDATE skills SET curr_xp = ${xp}, curr_lvl = curr_lvl + 1 WHERE skills.ID = ${skill_ID}`;
-        } else {
-          var sql3 = `UPDATE skills SET curr_xp = 100, curr_lvl = max_lvl WHERE skills.ID = ${skill_ID}`;
-        };
-        db.query(sql3, (err, result3) => {
-          if(err) throw err;
-        });
-      };
-    res.redirect('/updates');
-    });
-  });
-});
-
 // Profile
 app.get('/profile', (req, res) => {
   res.render('profile', {page: 'profile'});
@@ -212,85 +170,21 @@ app.get('/edit', (req, res) => {
   });
 });
 
-// Add Skill Form
-app.get('/skills/new', (req, res) => {
-  res.render('editSkills', {result: false, page: 'profile'});
-});
+// ------------------------------------------------------------
+const updateRoutes = require('./routes/updates');
+      skillRoutes = require('./routes/skills');
+      battleRoutes = require('./routes/battles');
 
-// Edit Skill Form
-app.get('/skills/:id', (req, res) => {
-  let sql = `SELECT ID, name, curr_lvl, max_lvl FROM skills WHERE ID = ${req.params.id}`;
-  db.query(sql, (err, result) => {
-    if(err) throw (err);
-    res.render('editSkills', {result: result, page: 'profile'});
-  });
-});
+app.use('/updates', updateRoutes);
+app.use('/skills', skillRoutes);
+app.use('/battles', battleRoutes);
 
-// Edit/ Create Skills
-app.post('/skills', (req, res) => {
-  if(req.body.skillID){
-    let sql = `UPDATE skills SET name = '${req.body.skill}', curr_lvl = ${req.body.currLvl}, max_lvl = ${req.body.maxLvl} WHERE ID = ${req.body.skillID}`
-    db.query(sql, (err, result) => {
-      if(err) throw err;
-    });
-  } else if(req.body.skill != ''){
-    let sql = `INSERT INTO skills (name, curr_lvl, max_lvl, user_ID) VALUES ('${req.body.skill}', ${req.body.currLvl}, ${req.body.maxLvl}, ${req.session.passport.user})`;
-    db.query(sql, (err, result) => {
-      if(err) throw err;
-    });
-  }
-  res.redirect('/edit');
-});
 
-// Delete Skills
-app.delete('/skills/:id', (req, res) => {
-  let sql = `DELETE FROM skills WHERE ID = ${req.params.id}`;
-  db.query(sql, (err, result) => {
-    if(err) throw err;
-    res.redirect('/edit');
-  });
-});
 
-// Add Battle Form
-app.put('/battles/new', (req, res) => {
-  res.render('editBattles', {result: false, skillID: req.body.skillID, page: 'profile'});
-});
 
-// Edit Battle Form
-app.get('/battles/:id', (req, res) => {
-  let sql = `SELECT * FROM battles WHERE ID = ${req.params.id}`;
-  db.query(sql, (err, result) => {
-    if(err) throw err;
-    res.render('editBattles', {result: result, page: 'profile'});
-  });
-});
-
-// Edit/ Create Battles
-app.post('/battles', (req, res) => {
-  if(req.body.id){
-    let sql = `UPDATE battles SET description = '${req.body.battle}', xp = ${req.body.xp} WHERE ID = ${req.body.id}`
-    db.query(sql, (err, result) => {
-      if(err) throw err;
-    });
-  } else{
-    let sql = `INSERT INTO battles (description, xp, skill_ID) VALUES ('${req.body.battle}', ${req.body.xp}, ${req.body.skillID})`;
-    db.query(sql, (err, result) => {
-      if(err) throw err;
-    });
-  }
-  res.redirect('/edit');
-});
-
-// Delete Battles
-app.delete('/battles/:id', (req, res) => {
-  let sql = `DELETE FROM battles WHERE ID = ${req.params.id}`;
-  db.query(sql, (err, result) => {
-    if(err) throw err;
-    res.redirect('/edit');
-  });
-});
-
-//--------------------------------------------------------------- SERVER ----------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------
+//                            SERVER
+// -----------------------------------------------------------------
 
 // Start Server
 const port = 3000;
