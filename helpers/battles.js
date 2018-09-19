@@ -12,7 +12,7 @@ exports.createBattle = (req, res) => {
       if(err) throw err;
     });
   }
-  res.redirect('/edit');
+  res.redirect('/skills/edit');
 };
 
 exports.addBattle = (req, res) => {
@@ -31,7 +31,7 @@ exports.deleteBattle = (req, res) => {
   let sql = `DELETE FROM battles WHERE ID = ${req.params.id}`;
   db.query(sql, (err, result) => {
     if(err) throw err;
-    res.redirect('/edit');
+    res.redirect('/skills/edit');
   });
 };
 

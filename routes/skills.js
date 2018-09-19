@@ -3,9 +3,13 @@ const express = require('express');
       helpers = require('../helpers/skills');
 
 
-router.route('/').post(helpers.createSkill); // Edit/ Create Skills
+router.route('/')
+  .get(helpers.showSkills) // Skill Overview
+  .post(helpers.createSkill); // Edit/ Create Skills
 
 router.route('/new').get(helpers.skillForm); // Add Skill Form
+
+router.route('/edit').get(helpers.editOverview); // Edit Overview
 
 router.route('/:id')
   .get(helpers.editSkill) // Edit Skill Form
