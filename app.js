@@ -3,7 +3,7 @@
 // -----------------------------------------------------------------
 
 const express = require('express');
-      methodOverride = require('method-override'); // for form input
+      methodOverride = require('method-override'); // for form action
       bodyParser = require('body-parser');
       passport = require('passport');
       flash = require('express-flash');
