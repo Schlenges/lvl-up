@@ -8,6 +8,7 @@ module.exports = (req, res) => {
 
   db.query(sql, (err, result) => {
     if(err) throw err;
+    
     if(result.length == 0){
       res.redirect('/skills/new');
     } else{
