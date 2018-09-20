@@ -174,3 +174,17 @@ body{
 #message{
   text-align: center;
 }
+
+.login-btn{
+  min-width: 10%;
+  align-self: center;
+  font-family: PixelMiners;
+  padding: 5px;
+  justify-self: 170px;
+  border-radius: 2px;
+}
+
+.login-form{
+  display: flex;
+  flex-direction: column;
+}

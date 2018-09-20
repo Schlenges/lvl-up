@@ -1,16 +1,19 @@
 <% include partials/header %>
 
 <div class="container">
-  <p>Flash: <%= message %></p>
-  <form action="/login" method="POST">
-    Username:
+  <p><%= message %></p>
+  <form action="/login" method="POST" class="login-form">
+    <label>Username:
     <input type="text" name="username">
+  </label>
     <br>
-    Password:
+    <label>Password:
     <input type="password" name="password">
+  </label>
     <br>
-    <input type="submit" value="Log In">
+    <input type="submit" value="Log In" class="login-btn">
   </form>
+  <p>Don't have an account yet? <a href="/signup">Sign up here</a>!</p>
 </div>
 
 <% include partials/footer %>
