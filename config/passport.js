@@ -41,7 +41,7 @@ passport.use('local-signup', new LocalStrategy({
       let sql = `INSERT INTO users (name, email, password) 
                   VALUES ('${req.body.username}', '${email}', '${password}')`;
 
-      db.query(sql, (err) => {
+      db.query(sql, (err, user) => {
         if(err) throw err;
         newUser.ID = user.insertId;  
         return done(null, newUser);
