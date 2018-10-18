@@ -22,7 +22,7 @@ CREATE TABLE skills (
     user_ID int(11) NOT NULL,
     PRIMARY KEY (ID),
     KEY user_id (user_ID),
-    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES users (ID) ON DELETE CASCADE
 )
 
 -- Create Battles Table
@@ -33,5 +33,5 @@ CREATE TABLE battles (
      skill_ID int(11) NOT NULL,
      PRIMARY KEY (ID),
      KEY skill_id (skill_ID),
-     FOREIGN KEY (skill_id) REFERENCES skills (id) ON DELETE CASCADE
+     FOREIGN KEY (skill_id) REFERENCES skills (ID) ON DELETE CASCADE
 )
